@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'pathspec'
+require "pathspec"
 
 module Danger
   # Reads CODEOWNERS files and checks that all added & modified files have at least one owner.
@@ -19,7 +19,9 @@ module Danger
     # @return   [Array<String>]
     attr_accessor :files_missing_codeowners
 
-   # Provides additional logging diagnostic information.
+    # Provides additional logging diagnostic information.
+    #
+    # @return   [Bool]
     attr_accessor :verbose
 
     # Verifies git added and changed files for missing owners.
@@ -33,21 +35,23 @@ module Danger
       codeowners_lines = read_codeowners_file(codeowners_path)
       codeowners_spec = parse_codeowners_spec(codeowners_lines)
       files = files_to_verify
-      @files_missing_codeowners = files.select { |file| !codeowners_spec.match file }
+      @files_missing_codeowners = files.reject { |file| codeowners_spec.match file }
 
       return if @files_missing_codeowners.empty?
 
       markdown format_missing_owners_message(@files_missing_codeowners)
-      fail 'Add CODEOWNERS rules to all added and changed files.'
+      fail "Add CODEOWNERS rules to all added and changed files."
     end
+
+    private
 
     def files_to_verify
       git.added_files + git.modified_files
     end
 
     def find_codeowners_file
-      directories = ['', '.gitlab', '.github', 'docs']
-      paths = directories.map { |dir| File.join(dir, 'CODEOWNERS') }
+      directories = ["", ".gitlab", ".github", "docs"]
+      paths = directories.map { |dir| File.join(dir, "CODEOWNERS") }
       Dir.glob(paths).first || paths.first
     end
 
@@ -60,11 +64,11 @@ module Danger
       patterns = []
       lines.each do |line|
         components = line.split(/\s+@/, 2)
-        if !line.match(/^\s*(?:#.*)?$/) && components.length == 2 && !components[0].empty?
-          pattern = components[0]
-          patterns << pattern
-          log "Adding pattern: #{pattern}"
-        end
+        next unless !line.match(/^\s*(?:#.*)?$/) && components.length == 2 && !components[0].empty?
+
+        pattern = components[0]
+        patterns << pattern
+        log "Adding pattern: #{pattern}"
       end
       PathSpec.from_lines(patterns)
     end
@@ -79,7 +83,7 @@ module Danger
       message
     end
 
-   def log(text)
+    def log(text)
       puts(text) if @verbose
     end
   end
