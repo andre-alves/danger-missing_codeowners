@@ -6,11 +6,11 @@ require 'missing_codeowners/gem_version.rb'
 Gem::Specification.new do |spec|
   spec.name          = 'danger-missing_codeowners'
   spec.version       = MissingCodeowners::VERSION
-  spec.authors       = ['andre-alves-ifood']
-  spec.email         = ['andre.alves@ifood.com.br']
-  spec.description   = %q{A short description of danger-missing_codeowners.}
-  spec.summary       = %q{A longer description of danger-missing_codeowners.}
-  spec.homepage      = 'https://github.com/andre-alves-ifood/danger-missing_codeowners'
+  spec.authors       = ['andre-alves']
+  spec.email         = ['andre.ver93@gmail.com']
+  spec.description   = %q{Checks for files without CODEOWNERS.}
+  spec.summary       = %q{Checks for files without CODEOWNERS.}
+  spec.homepage      = 'https://github.com/andre-alves/danger-missing_codeowners'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)
