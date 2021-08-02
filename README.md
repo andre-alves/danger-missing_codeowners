@@ -1,6 +1,8 @@
 # danger-missing_codeowners
 
-A [Danger Ruby](https://github.com/danger/danger) plugin for inspecting [CODEOWNERS](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners) files and finding which files have no owners.
+A [Danger Ruby](https://github.com/danger/danger) plugin for inspecting [CODEOWNERS](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners) and finding which files have no owners.
+
+Works with GitHub and GitLab.
 
 ## Installation
 
