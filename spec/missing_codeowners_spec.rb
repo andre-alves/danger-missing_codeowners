@@ -22,7 +22,7 @@ module Danger
         end
 
         it "fails when there are modified files without CODEOWNERS rules" do
-          allow(@my_plugin.git).to receive(:added_files)
+          allow(@my_plugin).to receive(:git_modified_files)
             .and_return([
                           "app/source.swift",
                           ".swiftlint.yml",
@@ -37,10 +37,7 @@ module Danger
                           "widgets/a/Tests/file.java",
                           "widgets/Tests/file.java",
                           "path with spaces/ok.php",
-                          "path with spaces2/missing.php"
-                        ])
-          allow(@my_plugin.git).to receive(:modified_files)
-            .and_return([
+                          "path with spaces2/missing.php",
                           "sources/#file_with_pound.rb",
                           "sources/#file_with_pound2.rb",
                           "module/README",
@@ -61,12 +58,34 @@ module Danger
           expect(markdown).to include("widgets/Tests/file.java")
           expect(markdown).to include("sources/#file_with_pound2.rb")
           expect(@my_plugin.files_missing_codeowners.length).to eq(7)
-          expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to all modified files."])
+          expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to match all files."])
         end
 
         it "succeeds when all modified files have CODEOWNERS rules" do
-          allow(@my_plugin.git).to receive(:added_files).and_return(["any_file.yml"])
-          allow(@my_plugin.git).to receive(:modified_files).and_return(["any_file.go"])
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["any_file.yml", "any_file.go"])
+
+          @my_plugin.verify
+
+          expect(@my_plugin.files_missing_codeowners.length).to eq(0)
+        end
+
+        it "fails when there are files without CODEOWNERS rules" do
+          @my_plugin.verify_all_files = true
+
+          allow(@my_plugin).to receive(:git_all_files).and_return(["app/source.swift", ".swiftlint.yml"])
+
+          @my_plugin.verify
+
+          markdown = @dangerfile.status_report[:markdowns].first.to_s
+          expect(markdown).to include("app/source.swift")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(1)
+          expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to match all files."])
+        end
+
+        it "succeeds when all files have CODEOWNERS rules" do
+          @my_plugin.verify_all_files = true
+
+          allow(@my_plugin).to receive(:git_all_files).and_return(["any_file.yml", "any_file.go"])
 
           @my_plugin.verify
 
@@ -81,8 +100,7 @@ module Danger
         end
 
         it "raises exception with invalid line" do
-          allow(@my_plugin.git).to receive(:added_files).and_return(["any_file.yml"])
-          allow(@my_plugin.git).to receive(:modified_files).and_return(["any_file.go"])
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["any_file.yml", "any_file.go"])
 
           expect { @my_plugin.verify }.to raise_error(RuntimeError)
         end

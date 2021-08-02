@@ -18,7 +18,14 @@ Just call the `verify` methd in your Dangerfile:
 missing_codeowners.verify
 ```
 
-The plugin will only verify files that were changed in the pull request diff.
+By default danger-missing_codeowners will only verify files that were added or modified in the pull request diff.
+
+To verify all files, use the `verify_all_files` option:
+
+```rb
+missing_codeowners.verify_all_files = true
+missing_codeowners.verify
+```
 
 ## Development
 

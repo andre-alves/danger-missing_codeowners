@@ -3,7 +3,7 @@
 require "pathspec"
 
 module Danger
-  # Parses the CODEOWNERS file and verifies that all modified files have at least one owner.
+  # Parses the CODEOWNERS file and verifies if files have at least one owner.
   # Works with GitHub and GitLab.
   # Results are passed out as a table in markdown.
   #
@@ -20,6 +20,11 @@ module Danger
     # @return   [Array<String>]
     attr_accessor :files_missing_codeowners
 
+    # Whether all files or only ones in PR diff to be reported. Default is false.
+    #
+    # @return   [Bool]
+    attr_accessor :verify_all_files
+
     # Provides additional logging diagnostic information.
     #
     # @return   [Bool]
@@ -32,10 +37,10 @@ module Danger
     # @return  [void]
     #
     def verify
+      files = files_to_verify
       codeowners_path = find_codeowners_file
       codeowners_lines = read_codeowners_file(codeowners_path)
       codeowners_spec = parse_codeowners_spec(codeowners_lines)
-      files = files_to_verify
       @files_missing_codeowners = files.reject { |file| codeowners_spec.match file }
 
       return if @files_missing_codeowners.empty?
@@ -44,13 +49,22 @@ module Danger
       log @files_missing_codeowners.join("\n")
 
       markdown format_missing_owners_message(@files_missing_codeowners)
-      fail "Add CODEOWNERS rules to all modified files."
+      fail "Add CODEOWNERS rules to match all files."
     end
 
     private
 
     def files_to_verify
+      @verify_all_files == true ? git_all_files : git_modified_files
+    end
+
+    def git_modified_files
       git.added_files + git.modified_files
+    end
+
+    def git_all_files
+      # The git object provided by Danger doesn't have ls_files
+      `git ls-files`.split($/)
     end
 
     def find_codeowners_file
