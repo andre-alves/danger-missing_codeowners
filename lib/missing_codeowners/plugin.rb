@@ -40,6 +40,9 @@ module Danger
 
       return if @files_missing_codeowners.empty?
 
+      log "Files missing CODEOWNERS:"
+      log @files_missing_codeowners.join("\n")
+
       markdown format_missing_owners_message(@files_missing_codeowners)
       fail "Add CODEOWNERS rules to all added and changed files."
     end
@@ -65,11 +68,15 @@ module Danger
       patterns = []
       lines.each do |line|
         components = line.split(/\s+@/, 2)
-        next unless !line.match(/^\s*(?:#.*)?$/) && components.length == 2 && !components[0].empty?
-
-        pattern = components[0]
-        patterns << pattern
-        log "Adding pattern: #{pattern}"
+        if line.match(/^\s*((?:#.*)|(?:\[.*)|(?:\^.*))?$/)
+          next # Comment, group or empty line
+        elsif components.length != 2 || (components[0].empty? && !components[1].empty?)
+          raise "[ERROR] CODEOWNERS parse error line: '#{line}'. Components: #{components}"
+        else
+          pattern = components[0]
+          patterns << pattern
+          log "Adding pattern: #{pattern}"
+        end
       end
       PathSpec.from_lines(patterns)
     end

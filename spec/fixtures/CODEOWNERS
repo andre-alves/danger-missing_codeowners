@@ -1,15 +1,43 @@
-# Example of CODEOWNERS
+# This is an example of a CODEOWNERS file
+# lines starting with a `#` will be ignored.
 
-*.yml 					@group
-File.txt 				@group
-/Dir/File2.rb		 	@group @group2
-Dir2/File3.rb			@group
-/Dir3/					@group
-Dir4/					@group
-Path\ With\ Spaces/ 	@group
+# app/ @commented-rule
 
-[Group]
-*.php					@group
+# We can specify a default match using wildcards:
+*.yml @default-codeowner
+
+# We can also specify "multiple tab or space" separated codeowners:
+*.yml @multiple @code @owners
+
+# Files with a `#` can still be accessed by escaping the pound sign
+\#file_with_pound.rb @owner-file-with-pound
+
+# Group names can be used to match groups and nested groups to specify
+# them as owners for a file
+README @group/with-nested/subgroup
+
+# Ending a path in a `/` will specify the Code Owners for every file
+# nested in that directory, on any level
+/configs/ @all-configs
+
+# Ending a path in `/*` will specify Code Owners for every file in
+# that directory, but not nested deeper. This will match
+# `docs/index.md` but not `docs/projects/index.md`
+/docs/* @root-docs
+
+# This will make a `lib` directory nested anywhere in the repository match
+lib/ @lib-owner
+
+# Nested Wildcards is also supported
+widgets/**/Sources/ @widgets-owner
+
+# If the path contains spaces, escape them like this:
+path\ with\ spaces/ @space-owner
+
+# Code Owners section:
+
+[Database]
+model/db/   @gl-database
 
 ^[Optional Group]
-*.go 					@group
+*.go  @golang

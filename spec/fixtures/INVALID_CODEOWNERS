@@ -1,0 +1,5 @@
+# Example of Invalid CODEOWNERS
+
+*.yml @default-codeowner
+*.go @golang
+invalid.txt group
