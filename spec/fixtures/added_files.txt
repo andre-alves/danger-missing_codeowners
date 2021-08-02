@@ -1,0 +1,3 @@
+swiftlint.yml
+Path With Spaces/Dummy.txt
+MyClass.swift

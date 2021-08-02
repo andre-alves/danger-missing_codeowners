@@ -8,39 +8,30 @@ module Danger
       expect(Danger::DangerMissingCodeowners.new(nil)).to be_a Danger::Plugin
     end
 
-    #
-    # You should test your custom attributes and methods here
-    #
     describe "with Dangerfile" do
       before do
         @dangerfile = testing_dangerfile
         @my_plugin = @dangerfile.missing_codeowners
+        @my_plugin.verbose = true
 
-        # mock the PR data
-        # you can then use this, eg. github.pr_author, later in the spec
-        json = File.read("#{File.dirname(__FILE__)}/support/fixtures/github_pr.json") # example json: `curl https://api.github.com/repos/danger/danger-plugin-template/pulls/18 > github_pr.json`
-        allow(@my_plugin.github).to receive(:pr_json).and_return(json)
+        fixtures_path = "#{File.dirname(__FILE__)}/fixtures"
+        allow(@my_plugin).to receive(:find_codeowners_file).and_return("#{fixtures_path}/CODEOWNERS")
+
+        added_files = File.readlines("#{fixtures_path}/added_files.txt").map(&:chomp)
+        allow(@my_plugin.git).to receive(:added_files).and_return(added_files)
+
+        modified_files = File.readlines("#{fixtures_path}/modified_files.txt").map(&:chomp)
+        allow(@my_plugin.git).to receive(:modified_files).and_return(modified_files)
       end
 
-      # Some examples for writing tests
-      # You should replace these with your own.
+      it "Fails when there are added or changed files without CODEOWNERS rules" do
+        @my_plugin.verify
 
-      it "Warns on a monday" do
-        monday_date = Date.parse("2016-07-11")
-        allow(Date).to receive(:today).and_return monday_date
-
-        @my_plugin.warn_on_mondays
-
-        expect(@dangerfile.status_report[:warnings]).to eq(["Trying to merge code on a Monday"])
-      end
-
-      it "Does nothing on a tuesday" do
-        monday_date = Date.parse("2016-07-12")
-        allow(Date).to receive(:today).and_return monday_date
-
-        @my_plugin.warn_on_mondays
-
-        expect(@dangerfile.status_report[:warnings]).to eq([])
+        expect(@my_plugin.files_missing_codeowners.length).to eq(2)
+        expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to all added and changed files."])
+        markdown = @dangerfile.status_report[:markdowns].first.to_s
+        expect(markdown).to include("MyClass.swift")
+        expect(markdown).to include("Dir2/NewFile.txt")
       end
     end
   end

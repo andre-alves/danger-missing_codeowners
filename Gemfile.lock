@@ -3,6 +3,7 @@ PATH
   specs:
     danger-missing_codeowners (0.0.1)
       danger-plugin-api (~> 1.0)
+      pathspec (~> 1.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -97,6 +98,7 @@ GEM
     parallel (1.20.1)
     parser (3.0.2.0)
       ast (~> 2.4.1)
+    pathspec (1.0.0)
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)

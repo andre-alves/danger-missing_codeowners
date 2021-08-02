@@ -1,0 +1,15 @@
+# Example of CODEOWNERS
+
+*.yml 					@group
+File.txt 				@group
+/Dir/File2.rb		 	@group @group2
+Dir2/File3.rb			@group
+/Dir3/					@group
+Dir4/					@group
+Path\ With\ Spaces/ 	@group
+
+[Group]
+*.php					@group
+
+^[Optional Group]
+*.go 					@group
