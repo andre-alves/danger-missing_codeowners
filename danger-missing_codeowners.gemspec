@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.version       = MissingCodeowners::VERSION
   spec.authors       = ["andre-alves"]
   spec.email         = ["andre.ver93@gmail.com"]
-  spec.description   = "Checks for files without CODEOWNERS."
-  spec.summary       = "Checks for files without CODEOWNERS."
+  spec.description   = "A Danger plugin for checking if files have owners. Works with GitHub and GitLab."
+  spec.summary       = "A Danger plugin for checking if files have owners."
   spec.homepage      = "https://github.com/andre-alves/danger-missing_codeowners"
   spec.license       = "MIT"
 

@@ -21,7 +21,7 @@ module Danger
             .and_return("#{File.dirname(__FILE__)}/fixtures/CODEOWNERS")
         end
 
-        it "fails when there are added or changed files without CODEOWNERS rules" do
+        it "fails when there are modified files without CODEOWNERS rules" do
           allow(@my_plugin.git).to receive(:added_files)
             .and_return([
                           "app/source.swift",
@@ -61,10 +61,10 @@ module Danger
           expect(markdown).to include("widgets/Tests/file.java")
           expect(markdown).to include("sources/#file_with_pound2.rb")
           expect(@my_plugin.files_missing_codeowners.length).to eq(7)
-          expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to all added and changed files."])
+          expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to all modified files."])
         end
 
-        it "succeeds when all added and changed files have CODEOWNERS rules" do
+        it "succeeds when all modified files have CODEOWNERS rules" do
           allow(@my_plugin.git).to receive(:added_files).and_return(["any_file.yml"])
           allow(@my_plugin.git).to receive(:modified_files).and_return(["any_file.go"])
 

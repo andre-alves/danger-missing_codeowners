@@ -3,7 +3,7 @@
 require "pathspec"
 
 module Danger
-  # Reads CODEOWNERS files and checks that all added & modified files have at least one owner.
+  # Parses the CODEOWNERS file and verifies that all modified files have at least one owner.
   # Works with GitHub and GitLab.
   # Results are passed out as a table in markdown.
   #
@@ -25,7 +25,7 @@ module Danger
     # @return   [Bool]
     attr_accessor :verbose
 
-    # Verifies git added and changed files for missing owners.
+    # Verifies git added and modified files for missing owners.
     # Generates a `markdown` list of warnings for the prose in a corpus of
     # .markdown and .md files.
     #
@@ -44,7 +44,7 @@ module Danger
       log @files_missing_codeowners.join("\n")
 
       markdown format_missing_owners_message(@files_missing_codeowners)
-      fail "Add CODEOWNERS rules to all added and changed files."
+      fail "Add CODEOWNERS rules to all modified files."
     end
 
     private
@@ -60,7 +60,7 @@ module Danger
     end
 
     def read_codeowners_file(path)
-      log "Reading CODEOWNERS file from path: #{path}"
+      log "Reading the CODEOWNERS file from path: #{path}"
       File.readlines(path).map(&:chomp)
     end
 
