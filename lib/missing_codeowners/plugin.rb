@@ -11,6 +11,7 @@ module Danger
   #
   #          missing_codeowners.verify
   #
+  # @see  andre-alves/danger-missing_codeowners
   # @tags codeowners
   #
   class DangerMissingCodeowners < Plugin

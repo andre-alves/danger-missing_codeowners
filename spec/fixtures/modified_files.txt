@@ -1,2 +1,0 @@
-File.txt
-Dir2/NewFile.txt
