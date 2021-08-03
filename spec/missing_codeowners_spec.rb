@@ -72,7 +72,6 @@ module Danger
 
         it "fails when there are files without CODEOWNERS rules and severity is error" do
           @my_plugin.verify_all_files = true
-
           allow(@my_plugin).to receive(:git_all_files).and_return(["app/source.swift", ".swiftlint.yml"])
 
           @my_plugin.verify
@@ -86,7 +85,6 @@ module Danger
         it "warns when there are files without CODEOWNERS rules and severity is warning" do
           @my_plugin.verify_all_files = true
           @my_plugin.severity = "warning"
-
           allow(@my_plugin).to receive(:git_all_files).and_return(["app/source.swift", ".swiftlint.yml"])
 
           @my_plugin.verify
@@ -99,12 +97,31 @@ module Danger
 
         it "succeeds when all files have CODEOWNERS rules" do
           @my_plugin.verify_all_files = true
-
           allow(@my_plugin).to receive(:git_all_files).and_return(["any_file.yml", "any_file.go"])
 
           @my_plugin.verify
 
           expect(@my_plugin.files_missing_codeowners.length).to eq(0)
+        end
+
+        it "does not truncates the markdown when there are not too many files missing owners" do
+          @my_plugin.max_number_of_files_to_report = 3
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["a.xml", "b.xml", "c.xml"])
+
+          @my_plugin.verify
+
+          expect(@dangerfile.status_report[:markdowns].first.to_s).to_not include("other files")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(3)
+        end
+
+        it "truncates the markdown when there are too many files missing owners" do
+          @my_plugin.max_number_of_files_to_report = 1
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["a.xml", "b.xml", "c.xml"])
+
+          @my_plugin.verify
+
+          expect(@dangerfile.status_report[:markdowns].first.to_s).to include("2 other files")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(3)
         end
       end
 

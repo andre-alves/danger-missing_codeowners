@@ -25,6 +25,11 @@ module Danger
     # @return   [Bool]
     attr_accessor :verify_all_files
 
+    # The maximum number of files missing owners Danger should report. Default is 100.
+    #
+    # @return   [Int]
+    attr_accessor :max_number_of_files_to_report
+
     # Defines the severity level of the execution. Possible values are: 'error' or 'warning'. Default is 'error'.
     #
     # @return   [String]
@@ -43,6 +48,7 @@ module Danger
     #
     def verify
       @verify_all_files ||= false
+      @max_number_of_files_to_report ||= 100
       @severity ||= "error"
       @verbose ||= false
 
@@ -57,7 +63,7 @@ module Danger
       log "Files missing CODEOWNERS:"
       log @files_missing_codeowners.join("\n")
 
-      markdown format_missing_owners_message(@files_missing_codeowners)
+      markdown format_missing_owners_message(@files_missing_codeowners, @max_number_of_files_to_report)
       danger_message = "Add CODEOWNERS rules to match all files."
 
       @severity == "error" ? (fail danger_message) : (warn danger_message)
@@ -106,13 +112,19 @@ module Danger
       PathSpec.from_lines(patterns)
     end
 
-    def format_missing_owners_message(files)
+    def format_missing_owners_message(files, max_count)
       message = "### Files missing CODEOWNERS\n\n".dup
       message << "| File |\n"
       message << "| ---- |\n"
-      files.each do |file|
+      files.take(max_count).each do |file|
         message << "| #{file} |\n"
       end
+
+      other_files_length = files.length - max_count
+      if other_files_length.positive?
+        message << "...and #{other_files_length} other files.\n"
+      end
+
       message
     end
 

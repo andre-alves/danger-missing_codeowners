@@ -102,6 +102,9 @@ Metrics/MethodLength:
 Style/Documentation:
   Enabled: false
 
+Metrics/ModuleLength:
+  Enabled: false
+
 # Adds complexity
 Style/IfInsideElse:
   Enabled: false
