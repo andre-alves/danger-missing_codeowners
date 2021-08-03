@@ -25,7 +25,12 @@ module Danger
     # @return   [Bool]
     attr_accessor :verify_all_files
 
-    # Provides additional logging diagnostic information.
+    # Defines the severity level of the execution. Possible values are: 'error' or 'warning'. Default is 'error'.
+    #
+    # @return   [String]
+    attr_accessor :severity
+
+    # Provides additional logging diagnostic information. Default is false.
     #
     # @return   [Bool]
     attr_accessor :verbose
@@ -37,6 +42,10 @@ module Danger
     # @return  [void]
     #
     def verify
+      @verify_all_files ||= false
+      @severity ||= "error"
+      @verbose ||= false
+
       files = files_to_verify
       codeowners_path = find_codeowners_file
       codeowners_lines = read_codeowners_file(codeowners_path)
@@ -49,7 +58,9 @@ module Danger
       log @files_missing_codeowners.join("\n")
 
       markdown format_missing_owners_message(@files_missing_codeowners)
-      fail "Add CODEOWNERS rules to match all files."
+      danger_message = "Add CODEOWNERS rules to match all files."
+
+      @severity == "error" ? (fail danger_message) : (warn danger_message)
     end
 
     private

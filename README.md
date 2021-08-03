@@ -29,6 +29,13 @@ missing_codeowners.verify_all_files = true
 missing_codeowners.verify
 ```
 
+You can also adjust the severity of the execution. Possible valures are `error` (default) and `warning`:
+
+```rb
+missing_codeowners.severity = 'warning'
+missing_codeowners.verify
+```
+
 ## Development
 
 1. Clone this repo

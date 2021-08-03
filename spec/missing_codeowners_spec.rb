@@ -21,7 +21,7 @@ module Danger
             .and_return("#{File.dirname(__FILE__)}/fixtures/CODEOWNERS")
         end
 
-        it "fails when there are modified files without CODEOWNERS rules" do
+        it "fails when there are modified files without CODEOWNERS rules and severity is error" do
           allow(@my_plugin).to receive(:git_modified_files)
             .and_return([
                           "app/source.swift",
@@ -70,7 +70,7 @@ module Danger
           expect(@my_plugin.files_missing_codeowners.length).to eq(0)
         end
 
-        it "fails when there are files without CODEOWNERS rules" do
+        it "fails when there are files without CODEOWNERS rules and severity is error" do
           @my_plugin.verify_all_files = true
 
           allow(@my_plugin).to receive(:git_all_files).and_return(["app/source.swift", ".swiftlint.yml"])
@@ -81,6 +81,20 @@ module Danger
           expect(markdown).to include("app/source.swift")
           expect(@my_plugin.files_missing_codeowners.length).to eq(1)
           expect(@dangerfile.status_report[:errors]).to eq(["Add CODEOWNERS rules to match all files."])
+        end
+
+        it "warns when there are files without CODEOWNERS rules and severity is warning" do
+          @my_plugin.verify_all_files = true
+          @my_plugin.severity = "warning"
+
+          allow(@my_plugin).to receive(:git_all_files).and_return(["app/source.swift", ".swiftlint.yml"])
+
+          @my_plugin.verify
+
+          markdown = @dangerfile.status_report[:markdowns].first.to_s
+          expect(markdown).to include("app/source.swift")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(1)
+          expect(@dangerfile.status_report[:warnings]).to eq(["Add CODEOWNERS rules to match all files."])
         end
 
         it "succeeds when all files have CODEOWNERS rules" do
