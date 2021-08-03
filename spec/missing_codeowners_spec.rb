@@ -40,6 +40,7 @@ module Danger
                           "path with spaces2/missing.php",
                           "sources/#file_with_pound.rb",
                           "sources/#file_with_pound2.rb",
+                          "module/LICENSE",
                           "module/README",
                           "nested/lib/source.js",
                           "lib/source.js",

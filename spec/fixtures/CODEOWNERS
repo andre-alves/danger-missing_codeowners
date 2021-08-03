@@ -7,10 +7,13 @@
 *.yml @default-codeowner
 
 # We can also specify "multiple tab or space" separated codeowners:
-*.yml @multiple @code @owners
+*.yml @multiple @code  @owners
 
 # Files with a `#` can still be accessed by escaping the pound sign
 \#file_with_pound.rb @owner-file-with-pound
+
+# You can use both usernames or email addresses to match
+LICENSE janedoe@gitlab.com @username
 
 # Group names can be used to match groups and nested groups to specify
 # them as owners for a file

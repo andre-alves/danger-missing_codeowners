@@ -81,15 +81,15 @@ module Danger
     def parse_codeowners_spec(lines)
       patterns = []
       lines.each do |line|
-        components = line.split(/\s+@/, 2)
+        components = line.split(/\s+(@\S+|\S+@\S+)/).reject { |c| c.strip.empty? }
         if line.match(/^\s*((?:#.*)|(?:\[.*)|(?:\^.*))?$/)
           next # Comment, group or empty line
-        elsif components.length != 2 || (components[0].empty? && !components[1].empty?)
-          raise "[ERROR] CODEOWNERS parse error line: '#{line}'. Components: #{components}"
+        elsif components.length < 2
+          raise "[ERROR] CODEOWNERS parse error line: '#{line}'"
         else
           pattern = components[0]
           patterns << pattern
-          log "Adding pattern: #{pattern}"
+          log "Adding pattern: '#{pattern}'"
         end
       end
       PathSpec.from_lines(patterns)
