@@ -85,7 +85,7 @@ module Danger
         if line.match(/^\s*((?:#.*)|(?:\[.*)|(?:\^.*))?$/)
           next # Comment, group or empty line
         elsif components.length < 2
-          raise "[ERROR] CODEOWNERS parse error line: '#{line}'"
+          raise "[ERROR] Invalid CODEOWNERS line: '#{line}'"
         else
           pattern = components[0]
           patterns << pattern
