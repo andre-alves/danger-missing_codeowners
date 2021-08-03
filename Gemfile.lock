@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    danger-missing_codeowners (0.0.1)
+    danger-missing_codeowners (1.0.0)
       danger-plugin-api (~> 1.0)
       pathspec (~> 1.0.0)
 
