@@ -53,20 +53,26 @@ module Danger
       @verbose ||= false
 
       files = files_to_verify
+      log "Files to verify:"
+      log files.join("\n")
+
       codeowners_path = find_codeowners_file
       codeowners_lines = read_codeowners_file(codeowners_path)
       codeowners_spec = parse_codeowners_spec(codeowners_lines)
       @files_missing_codeowners = files.reject { |file| codeowners_spec.match file }
 
-      return if @files_missing_codeowners.empty?
+      if @files_missing_codeowners.any?
+        log "Files missing CODEOWNERS:"
+        log @files_missing_codeowners.join("\n")
 
-      log "Files missing CODEOWNERS:"
-      log @files_missing_codeowners.join("\n")
+        markdown format_missing_owners_message(@files_missing_codeowners, @max_number_of_files_to_report)
+        danger_message = "Add CODEOWNERS rules to match all files."
+        @severity == "error" ? (fail danger_message) : (warn danger_message)
+      else
+        log "No files missing CODEOWNERS."
+      end
 
-      markdown format_missing_owners_message(@files_missing_codeowners, @max_number_of_files_to_report)
-      danger_message = "Add CODEOWNERS rules to match all files."
-
-      @severity == "error" ? (fail danger_message) : (warn danger_message)
+      log "-----"
     end
 
     private
