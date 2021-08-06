@@ -40,10 +40,15 @@ module Danger
                           "path with spaces2/missing.php",
                           "sources/#file_with_pound.rb",
                           "sources/#file_with_pound2.rb",
+                          "very/nested/dir/foo/bar/something.swift",
+                          "very/nested/foo/bar/something/something.swift",
+                          "nested/feature/something.swift",
+                          "nested/feature/something/something.swift",
                           "module/LICENSE",
                           "module/README",
                           "nested/lib/source.js",
-                          "lib/source.js",
+                          "very/nested/lib/source.js",
+                          "very/nested/sources/php/source.php",
                           "model/db/",
                           "sources/something.go"
                         ])

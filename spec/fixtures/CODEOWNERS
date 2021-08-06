@@ -29,13 +29,18 @@ README @group/with-nested/subgroup
 /docs/* @root-docs
 
 # This will make a `lib` directory nested anywhere in the repository match
-lib/ @lib-owner
+lib/             @lib-owner
+**/sources/php/  @lib-owner
 
 # Nested Wildcards is also supported
 widgets/**/Sources/ @widgets-owner
 
 # If the path contains spaces, escape them like this:
 path\ with\ spaces/ @space-owner
+
+# Nested directories starting without slash should match from anywhere
+foo/bar/  @owners
+feature/  @owners
 
 # Code Owners section:
 
