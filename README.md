@@ -14,7 +14,7 @@ gem 'danger-missing_codeowners'
 
 ## Usage
 
-Just call the `verify` methd in your Dangerfile:
+Just call the `verify` method in your Dangerfile:
 
 ```rb
 missing_codeowners.verify

@@ -112,9 +112,9 @@ module Danger
         else
           pattern = components[0]
 
-          # There is a different between .gitignore spec and CODEOWNERS in regards to nested directories
+          # There is a difference between .gitignore spec and CODEOWNERS in regards to nested directories
           # See frotz/ example in https://git-scm.com/docs/gitignore
-          # foo/bar (CODEOWNERS) == **/foo/bar (.gitignore)
+          # foo/bar (CODEOWNERS) equals **/foo/bar (.gitignore)
           if pattern.match(%r{^[^/*].*/.+})
             pattern = "**/#{pattern}"
           end
