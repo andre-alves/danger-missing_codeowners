@@ -82,7 +82,10 @@ module Danger
     end
 
     def git_modified_files
-      git.added_files + git.modified_files
+      # This algorithm detects added files, modified files and renamed/moved files
+      renamed_files_hash = git.renamed_files.map { |rename| [rename[:before], rename[:after]] }.to_h
+      post_rename_modified_files = git.modified_files.map { |modified_file| renamed_files_hash[modified_file] || modified_file }
+      (post_rename_modified_files - git.deleted_files) + git.added_files
     end
 
     def git_all_files
