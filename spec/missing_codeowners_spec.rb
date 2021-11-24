@@ -128,6 +128,33 @@ module Danger
           expect(@dangerfile.status_report[:markdowns].first.to_s).to include("2 other files")
           expect(@my_plugin.files_missing_codeowners.length).to eq(3)
         end
+
+        it "verifies added/modified/renamed files correctly when verify_all_files is false" do
+          @my_plugin.verify_all_files = false
+
+          allow(@my_plugin.git).to receive(:modified_files).and_return(["file_renamed_to_something_else.swift", "modified_file.swift"])
+          allow(@my_plugin.git).to receive(:renamed_files).and_return([{ before: "file_renamed_to_something_else.swift", after: "renamed_file.swift" }])
+          allow(@my_plugin.git).to receive(:added_files).and_return(["added_file.swift"])
+          allow(@my_plugin.git).to receive(:deleted_files).and_return(["deleted_file.swift"])
+
+          @my_plugin.verify
+
+          expect(@my_plugin.files_missing_codeowners).to include("added_file.swift")
+          expect(@my_plugin.files_missing_codeowners).to include("modified_file.swift")
+          expect(@my_plugin.files_missing_codeowners).to include("renamed_file.swift")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(3)
+        end
+
+        it "verifies only the provided files" do
+          @my_plugin.verify_all_files = true
+
+          allow(@my_plugin.git).to receive(:added_files).and_return(["added_file.swift"])
+
+          @my_plugin.verify(["added_file2.swift"])
+
+          expect(@my_plugin.files_missing_codeowners).to include("added_file2.swift")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(1)
+        end
       end
 
       context "and invalid CODEOWNERS file" do
