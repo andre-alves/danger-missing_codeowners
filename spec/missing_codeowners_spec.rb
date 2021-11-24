@@ -144,6 +144,17 @@ module Danger
           expect(@my_plugin.files_missing_codeowners).to include("renamed_file.swift")
           expect(@my_plugin.files_missing_codeowners.length).to eq(3)
         end
+
+        it "verifies only the provided files" do
+          @my_plugin.verify_all_files = true
+
+          allow(@my_plugin.git).to receive(:added_files).and_return(["added_file.swift"])
+
+          @my_plugin.verify(["added_file2.swift"])
+
+          expect(@my_plugin.files_missing_codeowners).to include("added_file2.swift")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(1)
+        end
       end
 
       context "and invalid CODEOWNERS file" do

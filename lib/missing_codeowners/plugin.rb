@@ -40,26 +40,31 @@ module Danger
     # @return   [Bool]
     attr_accessor :verbose
 
-    # Verifies git added and modified files for missing owners.
+    # Verifies files for missing owners.
     # Generates a `markdown` list of warnings for the prose in a corpus of
     # .markdown and .md files.
     #
+    # @param   [String] files
+    #          The list of files you want to verify, defaults to nil.
+    #          if nil, modified and added files from the diff will be used.
+    #
     # @return  [void]
     #
-    def verify
+    def verify(files = nil)
       @verify_all_files ||= false
       @max_number_of_files_to_report ||= 100
       @severity ||= "error"
       @verbose ||= false
 
-      files = files_to_verify
+      files_to_verify = files || files_from_git
+
       log "Files to verify:"
-      log files.join("\n")
+      log files_to_verify.join("\n")
 
       codeowners_path = find_codeowners_file
       codeowners_lines = read_codeowners_file(codeowners_path)
       codeowners_spec = parse_codeowners_spec(codeowners_lines)
-      @files_missing_codeowners = files.reject { |file| codeowners_spec.match file }
+      @files_missing_codeowners = files_to_verify.reject { |file| codeowners_spec.match file }
 
       if @files_missing_codeowners.any?
         log "Files missing CODEOWNERS:"
@@ -77,7 +82,7 @@ module Danger
 
     private
 
-    def files_to_verify
+    def files_from_git
       @verify_all_files == true ? git_all_files : git_modified_files
     end
 
