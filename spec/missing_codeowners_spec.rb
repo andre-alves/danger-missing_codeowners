@@ -155,6 +155,15 @@ module Danger
           expect(@my_plugin.files_missing_codeowners).to include("added_file2.swift")
           expect(@my_plugin.files_missing_codeowners.length).to eq(1)
         end
+
+        it "ignores explicitly ignored files" do
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["ignored_file.swift", "added_file.swift"])
+
+          @my_plugin.verify(ignored_files: ["ignored_file.swift"])
+
+          expect(@my_plugin.files_missing_codeowners).to include("added_file.swift")
+          expect(@my_plugin.files_missing_codeowners.length).to eq(1)
+        end
       end
 
       context "and invalid CODEOWNERS file" do
