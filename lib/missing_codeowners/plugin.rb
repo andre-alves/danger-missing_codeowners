@@ -64,12 +64,12 @@ module Danger
       @max_number_of_files_to_report ||= 100
       @severity ||= "error"
       @verbose ||= false
-      @ignored_files ||= opts.first.is_a?(Hash) ? opts.first[:ignored_files] : []
-      files = opts.first.is_a?(Hash) ? opts.first[:files] : opts.first
+      @ignored_files ||= opts.first.kind_of?(Hash) ? opts.first[:ignored_files] : []
+      files = opts.first.kind_of?(Hash) ? opts.first[:files] : opts.first
 
-      files_to_verify = (files || files_from_git).delete_if {
-        |file| @ignored_files.any? { |ignored_file| file.start_with?(ignored_file) }
-      }
+      files_to_verify = (files || files_from_git).delete_if do |file|
+        @ignored_files.any? { |ignored_file| file.start_with?(ignored_file) }
+      end
 
       log "Files to verify:"
       log files_to_verify.join("\n")
