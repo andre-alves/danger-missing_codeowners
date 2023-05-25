@@ -40,6 +40,12 @@ module Danger
     # @return   [Bool]
     attr_accessor :verbose
 
+    # The list of files to ignore. These are naive prefixes, so `foo/`
+    # will match `foo/bar`. No globbing.
+    #
+    # @return [Array<String>]
+    attr_accessor :ignored_files
+
     # Verifies files for missing owners.
     # Generates a `markdown` list of warnings for the prose in a corpus of
     # .markdown and .md files.
@@ -47,16 +53,23 @@ module Danger
     # @param   [String] files
     #          The list of files you want to verify, defaults to nil.
     #          if nil, modified and added files from the diff will be used.
+    # @param   [String] ignored_files
+    #          The list of files you want to ignore, defaults to [].
+    #          The files are treated as prefixes, so `foo/` will match `foo/bar`.
     #
     # @return  [void]
     #
-    def verify(files = nil)
+    def verify(*opts)
       @verify_all_files ||= false
       @max_number_of_files_to_report ||= 100
       @severity ||= "error"
       @verbose ||= false
+      @ignored_files ||= opts.first.is_a?(Hash) ? opts.first[:ignored_files] : []
+      files = opts.first.is_a?(Hash) ? opts.first[:files] : opts.first
 
-      files_to_verify = files || files_from_git
+      files_to_verify = (files || files_from_git).delete_if {
+        |file| @ignored_files.any? { |ignored_file| file.start_with?(ignored_file) }
+      }
 
       log "Files to verify:"
       log files_to_verify.join("\n")
