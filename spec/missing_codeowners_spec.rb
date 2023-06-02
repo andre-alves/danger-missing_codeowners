@@ -75,6 +75,26 @@ module Danger
           expect(@my_plugin.files_missing_codeowners.length).to eq(0)
         end
 
+        it "calls the block with an empty array if there are no missing files" do
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["any_file.yml", "any_file.go"])
+
+          @my_plugin.verify do |x|
+            expect(x).to eq []
+          end
+
+          expect(@my_plugin.files_missing_codeowners.length).to eq(0)
+        end
+
+        it "calls the block with the list of missing files if there are missing files" do
+          allow(@my_plugin).to receive(:git_modified_files).and_return(["myfile"])
+
+          @my_plugin.verify do |x|
+            expect(x).to eq ['myfile']
+          end
+
+          expect(@my_plugin.files_missing_codeowners.length).to eq(1)
+        end
+
         it "fails when there are files without CODEOWNERS rules and severity is error" do
           @my_plugin.verify_all_files = true
           allow(@my_plugin).to receive(:git_all_files).and_return(["app/source.swift", ".swiftlint.yml"])

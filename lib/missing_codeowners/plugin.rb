@@ -59,7 +59,7 @@ module Danger
     #
     # @return  [void]
     #
-    def verify(*opts)
+    def verify(*opts, &block)
       @verify_all_files ||= false
       @max_number_of_files_to_report ||= 100
       @severity ||= "error"
@@ -86,8 +86,12 @@ module Danger
         markdown format_missing_owners_message(@files_missing_codeowners, @max_number_of_files_to_report)
         danger_message = "Add CODEOWNERS rules to match all files."
         @severity == "error" ? (fail danger_message) : (warn danger_message)
+        
+        yield @files_missing_codeowners if block
       else
         log "No files missing CODEOWNERS."
+        
+        yield [] if block
       end
 
       log "-----"
