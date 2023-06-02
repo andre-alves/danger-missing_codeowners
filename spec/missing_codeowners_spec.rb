@@ -89,7 +89,7 @@ module Danger
           allow(@my_plugin).to receive(:git_modified_files).and_return(["myfile"])
 
           @my_plugin.verify do |x|
-            expect(x).to eq ['myfile']
+            expect(x).to eq ["myfile"]
           end
 
           expect(@my_plugin.files_missing_codeowners.length).to eq(1)
