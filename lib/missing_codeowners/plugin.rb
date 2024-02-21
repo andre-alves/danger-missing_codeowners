@@ -116,7 +116,9 @@ module Danger
     end
 
     def find_codeowners_file
-      directories = ["", ".gitlab", ".github", "docs"]
+      return "CODEOWNERS" if File.exist?("CODEOWNERS")
+
+      directories = [".gitlab", ".github", "docs"]
       paths = directories.map { |dir| File.join(dir, "CODEOWNERS") }
       Dir.glob(paths).first || paths.first
     end
