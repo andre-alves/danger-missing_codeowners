@@ -42,6 +42,9 @@ path\ with\ spaces/ @space-owner
 foo/bar/  @owners
 feature/  @owners
 
+# Empty owners
+empty/owners/
+
 # Code Owners section:
 
 [Database]
