@@ -50,7 +50,8 @@ module Danger
                           "very/nested/lib/source.js",
                           "very/nested/sources/php/source.php",
                           "model/db/",
-                          "sources/something.go"
+                          "sources/something.go",
+                          "empty/owners/foo.py"
                         ])
 
           @my_plugin.verify
@@ -183,19 +184,6 @@ module Danger
 
           expect(@my_plugin.files_missing_codeowners).to include("added_file.swift")
           expect(@my_plugin.files_missing_codeowners.length).to eq(1)
-        end
-      end
-
-      context "and invalid CODEOWNERS file" do
-        before do
-          allow(@my_plugin).to receive(:find_codeowners_file)
-            .and_return("#{File.dirname(__FILE__)}/fixtures/INVALID_CODEOWNERS")
-        end
-
-        it "raises exception with invalid line" do
-          allow(@my_plugin).to receive(:git_modified_files).and_return(["any_file.yml", "any_file.go"])
-
-          expect { @my_plugin.verify }.to raise_error(RuntimeError)
         end
       end
     end

@@ -134,7 +134,7 @@ module Danger
         components = line.split(/\s+(@\S+|\S+@\S+)/).reject { |c| c.strip.empty? }
         if line.match(/^\s*((?:#.*)|(?:\[.*)|(?:\^.*))?$/)
           next # Comment, group or empty line
-        elsif components.length < 2
+        elsif components.empty?
           raise "[ERROR] Invalid CODEOWNERS line: '#{line}'"
         else
           pattern = components[0]
